@@ -2,6 +2,16 @@
 
 let currentDays = 30;
 
+function updateTimestamp() {
+  const el = document.getElementById('lastUpdated');
+  if (el) {
+    const now = new Date();
+    const d = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const t = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    el.textContent = `Updated ${d}, ${t}`;
+  }
+}
+
 function showLoading(show) {
   document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
 }
@@ -139,6 +149,7 @@ async function loadDashboard() {
     allTimeSummary = await summaryRes.json();
 
     renderAll(data);
+    updateTimestamp();
 
     // Load config into sliders
     if (allTimeSummary.config) {
@@ -241,7 +252,7 @@ function connectSSE() {
       const data = JSON.parse(e.data);
       if (data.type === 'update') {
         allTimeSummary = data;
-        fetch(`/api/daily?days=${currentDays}`).then(r => r.json()).then(renderAll);
+        fetch(`/api/daily?days=${currentDays}`).then(r => r.json()).then(d => { renderAll(d); updateTimestamp(); });
       }
     } catch { /* ignore parse errors */ }
   };

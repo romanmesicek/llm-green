@@ -52,7 +52,8 @@ h1 { font-size: 1.5rem; font-weight: 700; color: var(--green); }
 .subtitle code { color: var(--text); background: var(--bg); padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.65rem; }
 
 .header-center { display: flex; align-items: center; }
-.header-right { display: flex; align-items: center; gap: 0.5rem; }
+.header-right { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+.last-updated { font-size: 0.75rem; color: var(--text-dim); margin-right: 0.5rem; }
 .live-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--text-dim);

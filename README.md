@@ -34,7 +34,7 @@ These lifecycle costs are significant but currently impossible to attribute per-
 
 ## Screenshot
 
-![LLM Green Dashboard](images/screenshot_2026-02-10.png)
+![LLM Green Dashboard](images/screenshot_2026-02-11.png)
 
 ## Quick Start
 

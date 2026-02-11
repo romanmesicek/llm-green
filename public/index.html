@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Green — CO2 & Water Footprint</title>
+  <title>LLM Green — CO2 & Water Footprint</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
@@ -11,7 +11,7 @@
   <div class="loading-overlay hidden" id="loadingOverlay"><span>Calculating...</span></div>
   <header>
     <div class="header-left">
-      <h1>Claude Green</h1>
+      <h1>LLM Green</h1>
       <span class="subtitle">Inference-only estimates — does not include training, hardware manufacturing, or network costs. Based on Jegham et al. 2025, Ren et al. 2025, AWS sustainability reports. Values may vary ±50%. All data from local <code>~/.claude/</code> files.</span>
     </div>
     <div class="header-center">
@@ -23,6 +23,7 @@
       </div>
     </div>
     <div class="header-right">
+      <span class="last-updated" id="lastUpdated"></span>
       <span class="live-dot" id="liveDot"></span>
       <span class="live-label" id="liveLabel">Connecting...</span>
     </div>
