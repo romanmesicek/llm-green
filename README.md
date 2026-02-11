@@ -212,15 +212,9 @@ Ideas for future development:
 - **Data export** — CSV/JSON export for external analysis.
 - **Historical trends** — Longer-term trend analysis, weekly/monthly reports.
 
-## References
-
-- Jegham, I., Kheiri, S., Benyahia, M. (2025). *"Decarbonizing Large Language Models: A Carbon Footprint Analysis of Generative AI."* — Energy per token benchmarks, off-site WUE factors.
-- Ren, S., Zhu, W., Li, B. (2025). *"The Price of Intelligence: Quantifying the Environmental Costs of AI Inference."* — Claude 3.7 Sonnet energy measurements, AWS PUE, grid CO2 intensity.
-- AWS (2024). *Sustainability Report.* — PUE (1,14), WUE on-site (0,18 L/kWh).
-
 ## License
 
-MIT — do whatever you want with it.
+MIT
 
 ## Disclaimer
 
