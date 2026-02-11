@@ -39,7 +39,7 @@ These lifecycle costs are significant but currently impossible to attribute per-
 ## Quick Start
 
 ```bash
-git clone https://github.com/raphaelmansuy/llm-green.git
+git clone https://github.com/romanmesicek/llm-green.git
 cd llm-green
 npm install
 npm start
