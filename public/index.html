@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Green — CO2 & Water Footprint</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="loading-overlay hidden" id="loadingOverlay"><span>Calculating...</span></div>
+  <header>
+    <div class="header-left">
+      <h1>Claude Green</h1>
+      <span class="subtitle">Inference-only estimates — does not include training, hardware manufacturing, or network costs. Based on Jegham et al. 2025, Ren et al. 2025, AWS sustainability reports. Values may vary ±50%. All data from local <code>~/.claude/</code> files.</span>
+    </div>
+    <div class="header-center">
+      <div class="chart-toggle timeframe-toggle">
+        <!-- <button class="toggle-btn" data-days="1">Day</button> -->
+        <button class="toggle-btn" data-days="7">Week</button>
+        <button class="toggle-btn active" data-days="30">Month</button>
+        <button class="toggle-btn" data-days="365">Year</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="live-dot" id="liveDot"></span>
+      <span class="live-label" id="liveLabel">Connecting...</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Row 1: Summary Cards -->
+    <section class="cards">
+      <div class="card card-co2">
+        <div class="card-label">CO2 Emissions</div>
+        <div class="card-value" id="totalCO2">—</div>
+        <div class="card-unit">gCO2e</div>
+        <div class="card-range" id="co2Range"></div>
+      </div>
+      <div class="card card-energy">
+        <div class="card-label">Energy Use</div>
+        <div class="card-value" id="totalEnergy">—</div>
+        <div class="card-unit">Wh</div>
+      </div>
+      <div class="card card-water">
+        <div class="card-label">Water Consumption</div>
+        <div class="card-value" id="totalWater">—</div>
+        <div class="card-unit">mL</div>
+        <div class="card-detail" id="waterDetail"></div>
+      </div>
+      <div class="card card-tokens">
+        <div class="card-label">Tokens Processed</div>
+        <div class="card-value" id="totalTokens">—</div>
+        <div class="card-detail" id="tokenDetail"></div>
+      </div>
+    </section>
+
+    <!-- Row 2: Chart + Equivalences -->
+    <section class="charts">
+      <div class="chart-container">
+        <h2 id="timelineTitle">Daily Footprint</h2>
+        <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+      </div>
+      <div class="panel equiv-panel">
+        <h2>Equivalences</h2>
+        <div class="equivalences" id="equivalences"></div>
+      </div>
+    </section>
+
+    <!-- Row 3: Settings -->
+    <section class="settings-section">
+      <div class="panel">
+        <h2 class="collapsible" id="settingsToggle">Settings <span class="arrow">&#9660;</span></h2>
+        <div class="settings" id="settingsPanel">
+          <div class="setting-item">
+            <div class="setting-header">
+              <span class="setting-name">Grid CO2 Intensity</span>
+              <span class="slider-value" id="gridCO2Val">385</span>
+              <span class="setting-unit">gCO2/kWh</span>
+            </div>
+            <input type="range" id="gridCO2" min="50" max="800" step="5" value="385">
+            <p class="setting-desc">Carbon emitted per kWh of electricity. Depends on the power grid mix where data centers run. France (nuclear): ~60 | EU avg: ~250 | <strong>US avg: 385</strong> | Coal-heavy: ~700+. Lower if Anthropic uses more renewables.</p>
+          </div>
+          <div class="setting-item">
+            <div class="setting-header">
+              <span class="setting-name">PUE (Power Usage Effectiveness)</span>
+              <span class="slider-value" id="pueVal">1.14</span>
+            </div>
+            <input type="range" id="pue" min="1.0" max="2.0" step="0.01" value="1.14">
+            <p class="setting-desc">Energy overhead for cooling, networking, lighting. A PUE of 1.14 means 14% extra energy on top of what the GPUs use. <strong>AWS reports 1.14</strong>. Industry range: 1.1 (best) to 1.6 (old facilities). 1.0 = perfect efficiency.</p>
+          </div>
+          <div class="setting-item">
+            <div class="setting-header">
+              <span class="setting-name">Cache Read Energy Factor</span>
+              <span class="slider-value" id="cacheFactorVal">0.15</span>
+            </div>
+            <input type="range" id="cacheFactor" min="0.0" max="1.0" step="0.01" value="0.15">
+            <p class="setting-desc">How much energy a cached token costs vs. computing a new one. Cache reads are memory lookups, not full GPU recomputation. <strong>No published research exists</strong> — 0.15 (15%) is a conservative upper bound. Realistic range: 0.01–0.10. Since cache tokens dominate your usage (~94%), this setting has the biggest impact on all numbers.</p>
+          </div>
+          <div class="setting-item">
+            <div class="setting-header">
+              <span class="setting-name">WUE On-site</span>
+              <span class="slider-value" id="wueOnsiteVal">0.18</span>
+              <span class="setting-unit">L/kWh</span>
+            </div>
+            <input type="range" id="wueOnsite" min="0.0" max="2.0" step="0.01" value="0.18">
+            <p class="setting-desc">Water used directly at the data center for cooling (evaporative cooling towers). Small contributor — typically only ~3% of total water. <strong>AWS reports ~0.18 L/kWh</strong>. Dry climates or air-cooled facilities use less.</p>
+          </div>
+          <div class="setting-item">
+            <div class="setting-header">
+              <span class="setting-name">WUE Off-site</span>
+              <span class="slider-value" id="wueOffsiteVal">5.11</span>
+              <span class="setting-unit">L/kWh</span>
+            </div>
+            <input type="range" id="wueOffsite" min="0.0" max="15.0" step="0.1" value="5.11">
+            <p class="setting-desc">Water consumed by power plants to generate electricity (cooling steam turbines). This dominates total water use — thermal plants (coal, gas, nuclear) use massive amounts. <strong>5.11 L/kWh is the US grid average</strong>. Renewables-heavy grids: ~1-2 L/kWh.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

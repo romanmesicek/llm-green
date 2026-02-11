@@ -1,0 +1,13 @@
+{
+  "name": "llm-green",
+  "version": "1.0.0",
+  "description": "CO2 & Water Footprint Dashboard for Claude Code",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "glob": "^11.0.0"
+  }
+}
