@@ -2113,7 +2113,7 @@ Expected: `Opus 5.5 · 5h 12%` and the snapshot JSON.
 **Ask the user first** (Global Constraints). If they agree, use the `update-config` skill to add to `~/.claude/settings.json`:
 
 ```json
-"statusLine": { "type": "command", "command": "node \"/Users/rm/Library/Mobile Documents/com~apple~CloudDocs/Development/Apps/claude-green/scripts/statusline-snapshot.js\"" }
+"statusLine": { "type": "command", "command": "node \"<absolute path to this repo>/scripts/statusline-snapshot.js\"" }
 ```
 
 After the next Claude response, `~/.llm-green/claude-statusline.json` should exist and `curl -s localhost:3456/api/quota` should show the windows. If `rate_limits` is missing (API-key login, or before the first response), `windows` is `null` and that is expected.
